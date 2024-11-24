@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer'
+import { extname } from 'path'
 
 import { Express } from 'express'
 
@@ -20,17 +22,15 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @UseInterceptors(FileInterceptor('file'))
+
+
   @Post('file')
-  uploadFile(
-    @Body() body: CreateProductDto,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return {
-      body,
-      file: file.buffer.toString(),
-    };
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
   }
+
+
 
 
   @Get()

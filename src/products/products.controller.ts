@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Res, StreamableFile, Req, } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer'
-import { extname } from 'path'
-
 import { Express } from 'express'
+import { GetImgProductDto } from './dto/getImg-product.dto';
 
 
 
@@ -14,24 +12,25 @@ import { Express } from 'express'
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
-
-  @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-
-
-    return this.productsService.create(createProductDto);
-  }
-
-
-
-  @Post('file')
+  @Post('/file')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
+    return file.fieldname
   }
+  @Post()
+  create(@Body() createProductDto: CreateProductDto) {
+    console.log(createProductDto);
+    return this.productsService.create(createProductDto);
+  }
+  @Get('/img')
+  getFile(@Body() img: GetImgProductDto) {
+    console.log(img);
 
-
-
+    // const file = createReadStream(join(process.cwd(), `/uploads/${req}`));
+    // file.pipe(res);
+    return 'good'
+  }
 
   @Get()
   findAll() {

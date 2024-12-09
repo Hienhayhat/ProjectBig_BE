@@ -11,7 +11,7 @@ import { diskStorage } from 'multer';
     storage: diskStorage({
       destination: './uploads',
       filename: (req, file, cb) => {
-        const filename = `${Date.now()}-${file.originalname}`;
+        const filename = `${file.originalname}`;
         cb(null, filename);
       },
     }),

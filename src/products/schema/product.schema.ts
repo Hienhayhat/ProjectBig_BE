@@ -20,6 +20,8 @@ export class Product {
     purchaseCount: number;
     @Prop()
     description: string;
+    @Prop()
+    img: string
 
 }
 

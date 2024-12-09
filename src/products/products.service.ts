@@ -16,8 +16,8 @@ export class ProductsService {
     return createdProduct.save();
   }
 
-  findAll() {
-    return `This action returns all products`;
+  findAll(): Promise<Product[]> {
+    return this.ProductModel.find();
   }
 
   findOne(id: number) {
@@ -31,9 +31,7 @@ export class ProductsService {
   remove(id: number) {
     return `This action removes a #${id} product`;
   }
-  photo(req) {
-    return 'congarate'
-  }
+
 
 }
 export class FileSizeValidationPipe implements PipeTransform {

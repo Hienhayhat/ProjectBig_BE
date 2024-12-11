@@ -5,6 +5,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express'
 import { GetImgProductDto } from './dto/getImg-product.dto';
+import { join } from 'path';
+import { createReadStream } from 'fs';
 
 
 
@@ -22,14 +24,6 @@ export class ProductsController {
   create(@Body() createProductDto: CreateProductDto) {
     console.log(createProductDto);
     return this.productsService.create(createProductDto);
-  }
-  @Get('/img')
-  getFile(@Body() img: GetImgProductDto) {
-    console.log(img);
-
-    // const file = createReadStream(join(process.cwd(), `/uploads/${req}`));
-    // file.pipe(res);
-    return 'good'
   }
 
   @Get()

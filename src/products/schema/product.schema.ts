@@ -8,16 +8,15 @@ export type ProductDocument = HydratedDocument<Product>;
 export class Product {
     @Prop()
     name: string;
-
     @Prop()
     price: number;
-
-    @Prop()
+    @Prop({ default: 5 })
     star: number;
     @Prop()
     type: string;
-    @Prop()
+    @Prop({ default: 0 })
     purchaseCount: number;
+
     @Prop()
     description: string;
     @Prop()

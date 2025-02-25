@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Res, StreamableFile, Req, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Res, StreamableFile, Req, Query, } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -25,15 +25,14 @@ export class ProductsController {
     console.log(createProductDto);
     return this.productsService.create(createProductDto);
   }
-
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  async findAll(@Query() query: string, @Query('pageSize') pageSize: number, @Query('current') current: number) {
+    return this.productsService.findAll(query, pageSize, current);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')

@@ -8,11 +8,15 @@ import { Product } from './products/schema/product.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports:
     [MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule.forRoot({
+        isGlobal: true,
+      })],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('DB_URL'),
       }),
@@ -22,8 +26,12 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'), // Path to your images folder
     }),
+      AuthModule,
+      UsersModule,
     ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }  
+export class AppModule {
+
+}  

@@ -3,14 +3,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Users } from './schema/users.schema';
 import { Model } from 'mongoose';
 import { CreateUsersDto } from './dto/create-users.dto';
+import { HashPass } from 'src/helper/hashpass';
 
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(Users.name) private UsersModel: Model<Users>) { }
 
     async create(createUsersDto: CreateUsersDto): Promise<Users> {
+        createUsersDto.password = await HashPass(createUsersDto.password);
         const createdUsers = new this.UsersModel(createUsersDto);
         return createdUsers.save();
+    }
+    async checkDuplicate(email) {
+        const checkDuplicate = await this.UsersModel.findOne({ email })
+        if (checkDuplicate) {
+            return true;
+        }
+        return false;
     }
 
     async findAll(): Promise<Users[]> {

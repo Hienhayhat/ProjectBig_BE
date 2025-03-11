@@ -7,10 +7,12 @@ import { Express } from 'express'
 import { GetImgProductDto } from './dto/getImg-product.dto';
 import { join } from 'path';
 import { createReadStream } from 'fs';
+import { Public } from 'src/decorator/custumize';
 
 
 
 @Controller('products')
+@Public()
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 

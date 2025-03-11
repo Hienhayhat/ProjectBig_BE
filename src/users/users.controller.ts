@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/create-users.dto';
 const bcrypt = require('bcrypt');
@@ -11,12 +11,13 @@ export class UsersController {
     @Post('register')
     async create(@Body() createUsersDto: CreateUsersDto) {
         try {
-            const salt = await bcrypt.genSalt(saltRounds);
-            createUsersDto.password = await bcrypt.hash(createUsersDto.password, salt);
-            console.log(createUsersDto);
-            return this.usersService.create(createUsersDto);
+            const checkDuplicate = await this.usersService.checkDuplicate(createUsersDto.email);
+            if (!checkDuplicate) {
+                return this.usersService.create(createUsersDto);
+            }
+            return new UnauthorizedException({ message: 'Email already exists' });
         } catch (err) {
-            throw new Error('Error hashing password');
+            throw new Error(err);
         }
     }
 

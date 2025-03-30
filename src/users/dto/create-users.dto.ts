@@ -13,6 +13,8 @@ export class CreateUsersDto {
     email: string;
     @IsOptional()
     phonenumber: string;
+    @IsOptional()
+    avatarUrl: string;
 
 
 

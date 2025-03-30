@@ -8,6 +8,7 @@ import 'dotenv/config'
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './passport/local.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
+import { GoogleStrategy } from './google/google.strategy';
 @Module({
   imports: [UsersModule, ConfigModule,
     JwtModule.register({
@@ -19,6 +20,6 @@ import { JwtStrategy } from './passport/jwt.strategy';
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule { }

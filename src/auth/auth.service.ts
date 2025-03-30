@@ -2,6 +2,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ComparePass } from 'src/helper/hashpass';
+import { CreateUsersDto } from 'src/users/dto/create-users.dto';
 import { UsersService } from 'src/users/users.service';
 const bcrypt = require('bcrypt');
 
@@ -26,5 +27,11 @@ export class AuthService {
             access_token: this.jwtService.sign(payload),
         };
     }
+    async validateGoogleUser(googleUser: CreateUsersDto) {
+        const user = await this.usersService.checkDuplicate(googleUser.email);
+        if (user) return user;
+        return await this.usersService.create(googleUser);
+    }
+
 
 }

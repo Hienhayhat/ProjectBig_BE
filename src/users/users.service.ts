@@ -14,10 +14,10 @@ export class UsersService {
         const createdUsers = new this.UsersModel(createUsersDto);
         return createdUsers.save();
     }
-    async checkDuplicate(email) {
-        const checkDuplicate = await this.UsersModel.findOne({ email })
-        if (checkDuplicate) {
-            return true;
+    async checkEmailExists(email) {
+        const user = await this.UsersModel.findOne({ email })
+        if (user) {
+            return user;
         }
         return false;
     }

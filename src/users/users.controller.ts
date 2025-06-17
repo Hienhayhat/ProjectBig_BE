@@ -1,18 +1,19 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUsersDto } from './dto/create-users.dto';
+import { Public } from 'src/decorator/custumize';
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
-
+    @Public()
     @Post('register')
     async create(@Body() createUsersDto: CreateUsersDto) {
         try {
-            const checkDuplicate = await this.usersService.checkDuplicate(createUsersDto.email);
-            if (!checkDuplicate) {
+            const checkEmailExists = await this.usersService.checkEmailExists(createUsersDto.email);
+            if (!checkEmailExists) {
                 return this.usersService.create(createUsersDto);
             }
             return new UnauthorizedException({ message: 'Email already exists' });

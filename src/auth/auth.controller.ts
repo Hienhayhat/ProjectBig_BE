@@ -1,11 +1,10 @@
 
-import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Request, Get, Req } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Req, Res, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { JwtAuthGuard } from './passport/jwt-auth.guard';
 import { Public } from 'src/decorator/custumize';
-import { GoogleAuthGuard } from './google/google-oauth.guard';
 
 @Controller()
 export class AuthController {
@@ -26,19 +25,15 @@ export class AuthController {
     }
 
     @Public()
-    @Get('google')
-    @UseGuards(GoogleAuthGuard)
-    async googleAuth(@Req() req) {
-        console.log(req);
-
+    @Post('auth/google')
+    async googleLogin(@Body() body: { accessToken: string }) {
+        return this.authService.HandleLoginWithGoogle(body.accessToken);
     }
-    @Public()
-    @Get('google/redirect')
-    @UseGuards(GoogleAuthGuard)
-    googleAuthRedirect(@Req() req) {
-        console.log(req.user);
 
-        return this.authService.login(req)
+    @Get('profile')
+    @UseGuards(JwtAuthGuard)
+    getProfile(@Req() req) {
+        return req.user;
     }
 
 }

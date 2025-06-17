@@ -1,8 +1,8 @@
-
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ComparePass } from 'src/helper/hashpass';
-import { CreateUsersDto } from 'src/users/dto/create-users.dto';
 import { UsersService } from 'src/users/users.service';
 const bcrypt = require('bcrypt');
 
@@ -10,27 +10,69 @@ const bcrypt = require('bcrypt');
 export class AuthService {
     constructor(
         private usersService: UsersService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private http: HttpService
     ) { }
     async validateUser(username: string, pass: string): Promise<any> {
         const user = await this.usersService.findOne(username);
+        if (!user) {
+            return null;
+        } else {
+            const checkPassword: boolean = await ComparePass(pass, user.password);
+            if (checkPassword) {
+                return user;
+            };
+            return null;
+        }
 
-        const checkPassword: boolean = await ComparePass(pass, user.password);
-        if (checkPassword) {
-            return user;
-        };
-        return null;
     }
     async login(user: any) {
         const payload = { username: user.username, sub: user._id };
         return {
             access_token: this.jwtService.sign(payload),
+            user: {
+                name: user.name || user.username,
+                id: user._id,
+            }
         };
     }
-    async validateGoogleUser(googleUser: CreateUsersDto) {
-        const user = await this.usersService.checkDuplicate(googleUser.email);
-        if (user) return user;
-        return await this.usersService.create(googleUser);
+
+
+    async HandleLoginWithGoogle(token: string) {
+        try {
+            const response = await firstValueFrom(
+                this.http.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }),
+            );
+            const googleUser = response.data;
+            const createUser: any = {
+                username: googleUser.email as string,
+                name: googleUser.name as string,
+                email: googleUser.email as string,
+                password: googleUser.id as string, // Use Google ID as password for simplicity
+            }
+            const checkUser = await this.usersService.checkEmailExists(createUser.email);
+            let user;
+            if (!checkUser)
+                user = await this.usersService.create(createUser);
+            else
+                user = await this.validateUser(createUser.username, createUser.password);
+
+            const payload = { username: user.username, sub: user._id };
+            return {
+                access_token: this.jwtService.sign(payload),
+                user: {
+                    name: user.name || user.username,
+                    id: user._id,
+                }
+            }
+        } catch (err) {
+            console.error('❌ Invalid Google token:', err.message);
+            throw new UnauthorizedException('Invalid Google access token');
+        }
     }
 
 

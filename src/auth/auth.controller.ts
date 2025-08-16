@@ -14,6 +14,7 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('auth/login')
     async login(@Request() req) {
+        console.log(this.authService.login(req.user));
 
         return this.authService.login(req.user);
     }
@@ -30,10 +31,5 @@ export class AuthController {
         return this.authService.HandleLoginWithGoogle(body.accessToken);
     }
 
-    @Get('profile')
-    @UseGuards(JwtAuthGuard)
-    getProfile(@Req() req) {
-        return req.user;
-    }
 
 }

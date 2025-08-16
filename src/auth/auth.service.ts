@@ -14,7 +14,9 @@ export class AuthService {
         private http: HttpService
     ) { }
     async validateUser(username: string, pass: string): Promise<any> {
-        const user = await this.usersService.findOne(username);
+        const user = await this.usersService.findByUsername(username);
+        console.log('Validating user:', user);
+
         if (!user) {
             return null;
         } else {
@@ -41,7 +43,7 @@ export class AuthService {
     async HandleLoginWithGoogle(token: string) {
         try {
             const response = await firstValueFrom(
-                this.http.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+                this.http.get(`${process.env.GOOGLE_INFO_URL}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

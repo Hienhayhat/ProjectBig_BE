@@ -13,10 +13,20 @@ export class UsersController {
     async create(@Body() createUsersDto: CreateUsersDto) {
         try {
             const checkEmailExists = await this.usersService.checkEmailExists(createUsersDto.email);
-            if (!checkEmailExists) {
-                return this.usersService.create(createUsersDto);
+            const checkUsernameExists = await this.usersService.checkUsernameExists(createUsersDto.username);
+            if (!checkEmailExists && !checkUsernameExists) {
+                await this.usersService.create(createUsersDto)
+                return {
+                    status: 201,
+                    message: 'User created successfully',
+                };
+            } else {
+                return {
+                    status: 400,
+                    message: 'Email or Username already exists',
+
+                };
             }
-            return new UnauthorizedException({ message: 'Email already exists' });
         } catch (err) {
             throw new Error(err);
         }
@@ -29,7 +39,7 @@ export class UsersController {
 
     // @Get(':id')
     // findOne(@Param('id') id: string) {
-    //     return this.usersService.findOne(+id);
+    //     return this.usersService.findOne(id);
     // }
 
     // @Patch(':id')

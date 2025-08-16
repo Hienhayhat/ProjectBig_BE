@@ -21,11 +21,21 @@ export class UsersService {
         }
         return false;
     }
+    async checkUsernameExists(username) {
+        const user = await this.UsersModel.findOne({ username })
+        if (user) {
+            return user;
+        }
+        return false;
+    }
 
     async findAll(): Promise<Users[]> {
         return this.UsersModel.find().exec();
     }
-    async findOne(username: string): Promise<Users | null> {
+    async findByUsername(username: string): Promise<Users | null> {
         return this.UsersModel.findOne({ username }).exec();
     }
-}
+    // async findOne(id: string): Promise<Users | null> {
+    //     return this.UsersModel.findOne({ id }).exec();
+    // }
+}   

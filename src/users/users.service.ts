@@ -35,7 +35,8 @@ export class UsersService {
     async findByUsername(username: string): Promise<Users | null> {
         return this.UsersModel.findOne({ username }).exec();
     }
-    // async findOne(id: string): Promise<Users | null> {
-    //     return this.UsersModel.findOne({ id }).exec();
-    // }
+    async findByUserId(id: string): Promise<Users | null> {
+
+        return this.UsersModel.findOne({ _id: id }).exec();
+    }
 }   

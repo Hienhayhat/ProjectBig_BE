@@ -16,6 +16,10 @@ export class Users {
     email: string;
     @Prop()
     phonenumber: string;
+    @Prop({ default: 'user' })
+    role: string;
+    @Prop()
+    address: string
 
 
 }

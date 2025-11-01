@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUsersDto } from './dto/create-users.dto';
+import { CreateUserDto } from './dto/create-users.dto';
 import { Public } from 'src/decorator/custumize';
+import { UpdateUserDto } from './dto/update-user.dto';
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -10,7 +11,7 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) { }
     @Public()
     @Post('register')
-    async create(@Body() createUsersDto: CreateUsersDto) {
+    async create(@Body() createUsersDto: CreateUserDto) {
         try {
             const checkEmailExists = await this.usersService.checkEmailExists(createUsersDto.email);
             const checkUsernameExists = await this.usersService.checkUsernameExists(createUsersDto.username);
@@ -42,13 +43,13 @@ export class UsersController {
         return this.usersService.findByUserId(id);
     }
 
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    //     return this.usersService.update(+id, updateUserDto);
-    // }
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.update(id, updateUserDto);
+    }
 
-    // @Delete(':id')
-    // remove(@Param('id') id: string) {
-    //     return this.usersService.remove(+id);
-    // }
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.usersService.remove(id);
+    }
 }

@@ -21,7 +21,7 @@ export class ProductsService {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current
     if (filter.pageSize) delete filter.pageSize
-    if (!pageSize) pageSize = 10;
+    if (!pageSize) pageSize = null;
     if (!current) current = 1;
     const totalItem = (await this.ProductModel.find(filter)).length;
     const totalPage = Math.ceil(totalItem / pageSize)
@@ -41,12 +41,12 @@ export class ProductsService {
     return data;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+    return this.ProductModel.findByIdAndUpdate(id, updateProductDto, { new: true });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string): Promise<Product> {
+    return this.ProductModel.findByIdAndDelete(id);
   }
 
 

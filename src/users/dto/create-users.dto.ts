@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional } from "class-validator";
 
-export class CreateUsersDto {
+export class CreateUserDto {
 
 
     @IsNotEmpty()
